@@ -1,6 +1,5 @@
 package com.slupicki.orchestrator.service
 
-import com.slupicki.orchestrator.model.Action
 import com.slupicki.orchestrator.model.Event
 import mu.KotlinLogging
 import org.springframework.stereotype.Service
@@ -33,15 +32,16 @@ class ExecutorEngine(
     }
 
     private fun noActionExecutor(event: EventInContext) {
-        val logMsg = "For machine ${event.stateMachineId} executed ${event.action}"
+        val logMsg = "For machine ${event.stateMachineId} executed ${event.action} - he,he just kidding. This is no action executor :-)"
         log.info { "$logMsg in context $event" }
         val attributes = event.context.toMutableMap()
         addLogToContext("ExecutorEngine: $logMsg", attributes)
         val response = event.copy(
-            context = attributes
+            context = attributes,
+            event = Event.UNKNOWN,
         )
-        //eventBus.send(Bus.TO_STATE_MACHINE, response)
-        log.info { "Normally this will be send to Bus.TO_STATE_MACHINE but this is ${Action.NO_ACTION} executor: $response" }
+        log.info { "Send to Bus.TO_STATE_MACHINE: $response" }
+        eventBus.send(Bus.TO_STATE_MACHINE, response)
     }
 }
 

@@ -3,6 +3,7 @@ package com.slupicki.orchestrator.service
 import com.slupicki.orchestrator.dao.StateMachineRepository
 import com.slupicki.orchestrator.dao.StateMachineTypeRepository
 import com.slupicki.orchestrator.model.Context
+import com.slupicki.orchestrator.model.Event
 import com.slupicki.orchestrator.model.StateMachine
 import com.slupicki.orchestrator.model.StateMachineType
 import mu.KotlinLogging
@@ -67,16 +68,20 @@ class StateMachineEngine(
     fun receiveEvent(event: EventInContext) {
         log.info { "Receive event: $event" }
         val stateMachine = stateMachineRepository.findById(event.stateMachineId).get()
+        val attributes = stateMachine.context.attributes
+        attributes.putAll(event.context)
         if (stateMachine.transitionsFromCurrentState().isEmpty()) {
             log.warn { "There is no transitions from ${stateMachine.currentState.name} for machine ${stateMachine.id} - do nothing" }
             return
         }
+        if (event.event == Event.UNKNOWN) {
+            log.info { "Got event ${event.event} - do nothing" }
+            return
+        }
         val transition = stateMachine.transitionsFromCurrentState()[event.event]!!
         val logInfo = "Perform transition from ${transition.fromState} to ${transition.toState} on machine ${event.stateMachineId} -> action ${transition.action}"
-        val attributes = stateMachine.context.attributes
-        log.info { "Perform transition from ${transition.fromState} to ${transition.toState} on machine ${event.stateMachineId} -> action ${transition.action}, context $attributes" }
+        log.info { "$logInfo, context $attributes" }
         stateMachine.currentState = transition.toState
-        attributes.putAll(event.context)
         addLogToContext(logInfo, attributes)
         val eventForExecutor = event.copy(
             context = attributes,

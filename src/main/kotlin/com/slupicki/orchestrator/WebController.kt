@@ -65,8 +65,8 @@ class WebController(
         model: Model,
     ): String {
         val eventForStateMachineEngine = EventInContext(
-            event = Event.valueOf(event),
             stateMachineId = machineId,
+            event = Event.valueOf(event),
         )
         eventBus.send(Bus.TO_STATE_MACHINE, eventForStateMachineEngine)
         // To give backend time to stabilize after event

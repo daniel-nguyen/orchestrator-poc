@@ -49,7 +49,7 @@ ${transitions.joinToString("\n") { transitionToDotEdge(it) }}
 
     fun transitionToDotEdge(t: Transition): String = """
         S${t.fromState.id} -> S${t.toState.id} [label="${t.event}" color=${when(t.event) {
-            Event.SUCCESS -> "black"
+            Event.SUCCESS, Event.UNKNOWN -> "black"
             Event.FAILURE -> "red"
         }}]
     """.trimIndent()

@@ -26,8 +26,8 @@ internal class EventBusTest {
 
         (1..10).forEach {
             val event = EventInContext(
-                Event.SUCCESS,
                 "machine1",
+                Event.SUCCESS,
                 mapOf("event" to it.toString()),
             )
             eventBus.send(Bus.TO_EXECUTOR, event)
