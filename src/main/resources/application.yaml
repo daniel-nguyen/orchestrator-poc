@@ -1,0 +1,11 @@
+spring:
+  datasource:
+    url: "jdbc:postgresql://localhost:12432/postgres"
+    username: "orchestratordb"
+    password: "orchestratordb"
+  jpa:
+    hibernate:
+      ddl-auto: update
+  flyway:
+    baseline-on-migrate: true
+    clean-disabled: false

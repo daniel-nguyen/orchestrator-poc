@@ -1,0 +1,14 @@
+version: '3.1'
+
+services:
+  db:
+    image: postgres
+    restart: always
+    container_name: orchestratordb
+    environment:
+      POSTGRES_USER: "orchestratordb"
+      POSTGRES_PASSWORD: "orchestratordb"
+    ports:
+      - "12432:5432"
+    volumes:
+      - "./db:/var/lib/postgresql/data"
