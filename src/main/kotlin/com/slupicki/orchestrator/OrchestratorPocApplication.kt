@@ -2,7 +2,6 @@ package com.slupicki.orchestrator
 
 import com.slupicki.orchestrator.dao.StateMachineRepository
 import com.slupicki.orchestrator.dao.StateMachineTypeRepository
-import com.slupicki.orchestrator.model.Event
 import com.slupicki.orchestrator.service.GraphService
 import com.slupicki.orchestrator.service.StateMachineEngine
 import mu.KotlinLogging
@@ -42,38 +41,6 @@ class OrchestratorPocApplication: CommandLineRunner {
     private fun logOnboardingDot() {
         val s = graphService.createDot("ONBOARDING", "Atlas")
         log.info { s }
-    }
-
-    private fun testOnboarding() {
-        stateMachineEngine.showTypes()
-        val stateMachine = stateMachineEngine.createMachine("ONBOARDING", "client1", mapOf("a" to "value_a"))
-        log.info { "Created machine: ${stateMachine.id}" }
-        stateMachineEngine.receiveEvent(
-            Event.SUCCESS,
-            "client1",
-            mapOf("initialize" to "Hello world"),
-        )
-        stateMachineEngine.receiveEvent(
-            Event.FAILURE,
-            "client1",
-            mapOf("step2" to "got failure"),
-        )
-        stateMachineEngine.receiveEvent(
-            Event.SUCCESS,
-            "client1",
-            mapOf("step3" to "got success"),
-        )
-        stateMachineEngine.receiveEvent(
-            Event.SUCCESS,
-            "client1",
-            mapOf("step4" to "got success"),
-        )
-        stateMachineEngine.receiveEvent(
-            Event.SUCCESS,
-            "client1",
-            mapOf("step5" to "got success"),
-        )
-        stateMachineEngine.showMachines()
     }
 
 }

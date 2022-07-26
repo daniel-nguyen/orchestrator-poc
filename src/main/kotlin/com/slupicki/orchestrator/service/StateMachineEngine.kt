@@ -3,28 +3,32 @@ package com.slupicki.orchestrator.service
 import com.slupicki.orchestrator.dao.StateMachineRepository
 import com.slupicki.orchestrator.dao.StateMachineTypeRepository
 import com.slupicki.orchestrator.model.Context
-import com.slupicki.orchestrator.model.Event
 import com.slupicki.orchestrator.model.StateMachine
 import com.slupicki.orchestrator.model.StateMachineType
 import mu.KotlinLogging
 import org.springframework.data.domain.Sort
+import org.springframework.stereotype.Component
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import java.util.UUID
+import java.util.*
+import javax.annotation.PostConstruct
 
 @Service
 class StateMachineEngine(
     val stateMachineTypeRepository: StateMachineTypeRepository,
     val stateMachineRepository: StateMachineRepository,
-    val executorEngine: ExecutorEngine,
+    val eventBus: EventBus,
 ) {
     val log = KotlinLogging.logger {}
 
     @Transactional
-    fun showTypes(): List<StateMachineType> {
-        val stateMachineTypes = stateMachineTypeRepository.findAll()
+    fun getMachines(): List<StateMachine> = stateMachineRepository.findAll(Sort.by(Sort.Direction.DESC, "id"))
 
-        stateMachineTypes.forEach {
+    @Transactional
+    fun getMachineTypes(): List<StateMachineType> = stateMachineTypeRepository.findAll()
+
+    @Transactional
+    fun showTypes() = getMachineTypes().forEach {
             log.info { "Found type of state machine '${it.name}'" }
             log.info { "Transitions:" }
             it.transitions.forEach {
@@ -32,17 +36,11 @@ class StateMachineEngine(
             }
             log.info { "----" }
         }
-        return stateMachineTypes
-    }
 
     @Transactional
-    fun showMachines(): List<StateMachine> {
-        val machines = stateMachineRepository.findAll(Sort.by(Sort.Direction.DESC, "id"))
-        machines.forEach {
+    fun showMachines()  = getMachines().forEach {
             log.info { "Machine ${it.id} of type ${it.stateMachineType.name} is in state ${it.currentState} and have context ${it.context.attributes}" }
         }
-        return machines
-    }
 
     @Transactional
     fun createMachine(type: String, id: String = UUID.randomUUID().toString(), initialContext: Map<String, String> = emptyMap()): StateMachine {
@@ -66,18 +64,41 @@ class StateMachineEngine(
     }
 
     @Transactional
-    fun receiveEvent(event: Event, stateMachineId: String, context: Map<String, String> = emptyMap()) {
-        val stateMachine = stateMachineRepository.findById(stateMachineId).get()
-        val transition = stateMachine.transitionsFromCurrentState()[event]!!
-        val logInfo = "Perform transition from ${transition.fromState} to ${transition.toState} on machine $stateMachineId -> action ${transition.action}"
+    fun receiveEvent(event: EventInContext) {
+        log.info { "Receive event: $event" }
+        val stateMachine = stateMachineRepository.findById(event.stateMachineId).get()
+        if (stateMachine.transitionsFromCurrentState().isEmpty()) {
+            log.warn { "There is no transitions from ${stateMachine.currentState.name} for machine ${stateMachine.id} - do nothing" }
+            return
+        }
+        val transition = stateMachine.transitionsFromCurrentState()[event.event]!!
+        val logInfo = "Perform transition from ${transition.fromState} to ${transition.toState} on machine ${event.stateMachineId} -> action ${transition.action}"
         val attributes = stateMachine.context.attributes
-        log.info { "Perform transition from ${transition.fromState} to ${transition.toState} on machine $stateMachineId -> action ${transition.action}, context $attributes" }
+        log.info { "Perform transition from ${transition.fromState} to ${transition.toState} on machine ${event.stateMachineId} -> action ${transition.action}, context $attributes" }
         stateMachine.currentState = transition.toState
-        attributes.putAll(context)
+        attributes.putAll(event.context)
         addLogToContext(logInfo, attributes)
-        // This should be done asynchronous. Just send event to executorEngine and response will be handle by this function (receiveEvent())
-        val executorResponse = executorEngine.execute(transition.action, stateMachineId, attributes)
-        attributes.putAll(executorResponse.context)
-        // -----------------------------------
+        val eventForExecutor = event.copy(
+            context = attributes,
+            action = transition.action,
+        )
+        eventBus.send(Bus.TO_EXECUTOR, eventForExecutor)
+    }
+}
+
+// This is to make sure that call to stateMachineEngine.receiveEvent(it) is in transaction
+@Component
+class StateMachineEngineRegistrator(
+    val stateMachineEngine: StateMachineEngine,
+    val eventBus: EventBus,
+) {
+    val log = KotlinLogging.logger {}
+
+    @PostConstruct
+    fun postConstruct() {
+        eventBus.subscribe(Bus.TO_STATE_MACHINE) {
+            stateMachineEngine.receiveEvent(it)
+        }
+        log.info { "StateMachineEngine now subscribe channel ${Bus.TO_STATE_MACHINE}" }
     }
 }

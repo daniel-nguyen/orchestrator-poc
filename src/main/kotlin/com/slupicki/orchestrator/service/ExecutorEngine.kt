@@ -25,32 +25,23 @@ class ExecutorEngine(
         }
     }
 
-    private fun execute(context: EventInContext) {
-        when (context.action) {
-            else -> successfulResponse(context)
+    private fun execute(event: EventInContext) {
+        log.info { "Receive event: $event" }
+        when (event.action) {
+            else -> noActionExecutor(event)
         }
     }
 
-    private fun successfulResponse(context: EventInContext) {
-        TODO("Not yet implemented")
-    }
-
-    fun execute(action: Action, stateMachineId: String, context: MutableMap<String, String>): ExecutorResponse = when (action) {
-        Action.ATLAS -> successfulResponse(action, stateMachineId, context)
-        Action.FINSTAR -> successfulResponse(action, stateMachineId, context)
-        Action.FINSTAR_MANUAL -> successfulResponse(action, stateMachineId, context)
-        Action.SMART_TRADE -> successfulResponse(action, stateMachineId, context)
-        Action.SMART_TRADE_MANUAL -> successfulResponse(action, stateMachineId, context)
-        Action.ATLAS_MANUAL -> successfulResponse(action, stateMachineId, context)
-        Action.SUCCESFUL_ONBOARDING -> successfulResponse(action, stateMachineId, context)
-        else -> successfulResponse(action, stateMachineId, context)
-    }
-
-    private fun successfulResponse(action: Action, stateMachineId: String, context: MutableMap<String, String>): ExecutorResponse {
-        val logMsg = "For machine $stateMachineId executed $action"
-        log.info { "$logMsg in context $context" }
-        addLogToContext("ExecutorEngine: $logMsg", context)
-        return ExecutorResponse(Event.SUCCESS, stateMachineId, context)
+    private fun noActionExecutor(event: EventInContext) {
+        val logMsg = "For machine ${event.stateMachineId} executed ${event.action}"
+        log.info { "$logMsg in context $event" }
+        val attributes = event.context.toMutableMap()
+        addLogToContext("ExecutorEngine: $logMsg", attributes)
+        val response = event.copy(
+            context = attributes
+        )
+        //eventBus.send(Bus.TO_STATE_MACHINE, response)
+        log.info { "Normally this will be send to Bus.TO_STATE_MACHINE but this is ${Action.NO_ACTION} executor: $response" }
     }
 }
 

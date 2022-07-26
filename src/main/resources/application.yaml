@@ -6,6 +6,7 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
+    open-in-view: true
   flyway:
     baseline-on-migrate: true
     clean-disabled: false

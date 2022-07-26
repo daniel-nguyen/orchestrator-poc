@@ -18,7 +18,7 @@ enum class Bus {
 data class EventInContext(
     val event: Event,
     val stateMachineId: String,
-    val context: Map<String, String>,
+    val context: Map<String, String> = emptyMap(),
     val action: Action = Action.NO_ACTION,
 )
 

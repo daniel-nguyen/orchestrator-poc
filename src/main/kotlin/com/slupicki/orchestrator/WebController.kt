@@ -1,6 +1,9 @@
 package com.slupicki.orchestrator
 
 import com.slupicki.orchestrator.model.Event
+import com.slupicki.orchestrator.service.Bus
+import com.slupicki.orchestrator.service.EventBus
+import com.slupicki.orchestrator.service.EventInContext
 import com.slupicki.orchestrator.service.GraphService
 import com.slupicki.orchestrator.service.StateMachineEngine
 import mu.KotlinLogging
@@ -17,13 +20,14 @@ import org.springframework.web.bind.annotation.RequestParam
 class WebController(
     val graphService: GraphService,
     val stateMachineEngine: StateMachineEngine,
+    val eventBus: EventBus,
 ) {
     val log = KotlinLogging.logger {}
 
     @RequestMapping("/")
     fun home(model: Model): String {
-        val stateMachineTypes = stateMachineEngine.showTypes()
-        val stateMachines = stateMachineEngine.showMachines()
+        val stateMachineTypes = stateMachineEngine.getMachineTypes()
+        val stateMachines = stateMachineEngine.getMachines()
         val machineIdToAvailableEvents = stateMachines.associate { it.id!! to it.transitionsFromCurrentState().keys }
         model.addAttribute("stateMachines", stateMachines)
         model.addAttribute("machineIdToAvailableEvents", machineIdToAvailableEvents)
@@ -60,7 +64,13 @@ class WebController(
         @RequestParam(name = "machine_id") machineId: String,
         model: Model,
     ): String {
-        stateMachineEngine.receiveEvent(Event.valueOf(event), machineId)
+        val eventForStateMachineEngine = EventInContext(
+            event = Event.valueOf(event),
+            stateMachineId = machineId,
+        )
+        eventBus.send(Bus.TO_STATE_MACHINE, eventForStateMachineEngine)
+        // To give backend time to stabilize after event
+        Thread.sleep(500)
         return "redirect:/"
     }
 
