@@ -5,12 +5,6 @@ import mu.KotlinLogging
 import org.springframework.stereotype.Service
 import javax.annotation.PostConstruct
 
-data class ExecutorResponse(
-    val event: Event,
-    val stateMachineId: String,
-    val context: Map<String, String>,
-)
-
 @Service
 class ExecutorEngine(
     val eventBus: EventBus,
