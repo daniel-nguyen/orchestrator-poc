@@ -1,6 +1,9 @@
 package com.slupicki.orchestrator.service
 
 import com.slupicki.orchestrator.model.Event
+import com.slupicki.orchestrator.service.event.Bus
+import com.slupicki.orchestrator.service.event.EventBus
+import com.slupicki.orchestrator.service.event.EventInContext
 import mu.KotlinLogging
 import org.springframework.stereotype.Service
 import javax.annotation.PostConstruct

@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.CommandLineRunner
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
+import org.springframework.jms.core.JmsTemplate
 
 @SpringBootApplication
 class OrchestratorPocApplication: CommandLineRunner {
@@ -30,12 +31,17 @@ class OrchestratorPocApplication: CommandLineRunner {
     @Autowired
     private lateinit var stateMachineRepository: StateMachineRepository
 
+    @Autowired
+    lateinit var jmsTemplate: JmsTemplate
+
 
     override fun run(vararg args: String?) {
         //flyway.clean()
         //flyway.migrate()
 
         //stateMachineEngine.createMachine("ONBOARDING", "client1", mapOf("a" to "value_a"))
+
+        jmsTemplate.send("test") { it.createTextMessage("Hello world")}
     }
 
     private fun logOnboardingDot() {

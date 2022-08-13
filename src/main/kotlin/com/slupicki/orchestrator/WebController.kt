@@ -1,11 +1,11 @@
 package com.slupicki.orchestrator
 
 import com.slupicki.orchestrator.model.Event
-import com.slupicki.orchestrator.service.Bus
-import com.slupicki.orchestrator.service.EventBus
-import com.slupicki.orchestrator.service.EventInContext
 import com.slupicki.orchestrator.service.GraphService
 import com.slupicki.orchestrator.service.StateMachineEngine
+import com.slupicki.orchestrator.service.event.Bus
+import com.slupicki.orchestrator.service.event.EventBus
+import com.slupicki.orchestrator.service.event.EventInContext
 import mu.KotlinLogging
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity

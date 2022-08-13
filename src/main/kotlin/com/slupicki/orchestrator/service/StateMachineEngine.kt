@@ -6,6 +6,9 @@ import com.slupicki.orchestrator.model.Context
 import com.slupicki.orchestrator.model.Event
 import com.slupicki.orchestrator.model.StateMachine
 import com.slupicki.orchestrator.model.StateMachineType
+import com.slupicki.orchestrator.service.event.Bus
+import com.slupicki.orchestrator.service.event.EventBus
+import com.slupicki.orchestrator.service.event.EventInContext
 import mu.KotlinLogging
 import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Component

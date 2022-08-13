@@ -1,7 +1,6 @@
-package com.slupicki.orchestrator.service
+package com.slupicki.orchestrator.service.event
 
-import com.slupicki.orchestrator.model.Action
-import com.slupicki.orchestrator.model.Event
+import com.slupicki.orchestrator.service.IEventBus
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.GlobalScope
@@ -10,24 +9,12 @@ import kotlinx.coroutines.launch
 import org.springframework.stereotype.Service
 import java.util.function.Consumer
 
-enum class Bus {
-    TO_EXECUTOR,
-    TO_STATE_MACHINE,
-}
-
-data class EventInContext(
-    val stateMachineId: String,
-    val event: Event = Event.UNKNOWN,
-    val context: Map<String, String> = emptyMap(),
-    val action: Action = Action.NO_ACTION,
-)
-
-@Service
-class EventBus {
+@Service("InMemoryEventBus")
+class EventBus : IEventBus {
     private val buses = mutableMapOf<Bus, Channel<EventInContext>>()
 
     @OptIn(DelicateCoroutinesApi::class, ExperimentalCoroutinesApi::class)
-    fun send(destination: Bus, event: EventInContext) {
+    override fun send(destination: Bus, event: EventInContext) {
         setUpBusIfNotExist(destination)
         GlobalScope.launch {
             val channel = buses[destination]!!
@@ -38,7 +25,7 @@ class EventBus {
     }
 
     @OptIn(DelicateCoroutinesApi::class, ExperimentalCoroutinesApi::class)
-    fun subscribe(destination: Bus, function: Consumer<EventInContext>) {
+    override fun subscribe(destination: Bus, function: Consumer<EventInContext>) {
         setUpBusIfNotExist(destination)
         GlobalScope.launch {
             val channel = buses[destination]!!
