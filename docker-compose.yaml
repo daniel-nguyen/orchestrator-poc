@@ -21,6 +21,6 @@ services:
       - "61616:61616"
       - "8161:8161"
     volumes:
-      - "c:/Users/jansl/activemq-data/conf:/opt/activemq/conf:rw"
-      - "c:/Users/jansl/activemq-data/data:/opt/activemq/data:rw"
+      - "c:/temp/activemq-data/conf:/opt/activemq/conf:rw"
+      - "c:/temp/activemq-data/data:/opt/activemq/data:rw"
 

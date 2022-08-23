@@ -1,9 +1,8 @@
-package com.slupicki.orchestrator.service
+package com.slupicki.spring.service
 
 import com.slupicki.orchestrator.dao.StateMachineTypeRepository
 import com.slupicki.orchestrator.model.Event
 import com.slupicki.orchestrator.model.State
-import com.slupicki.orchestrator.model.StateMachineType
 import com.slupicki.orchestrator.model.Transition
 import guru.nidi.graphviz.engine.Format
 import guru.nidi.graphviz.engine.Graphviz
@@ -12,9 +11,9 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.io.OutputStream
 
-@Service
-class GraphService(
-//    val stateMachineTypeRepository: StateMachineTypeRepository,
+//@Service
+class SpringGraphService(
+    val stateMachineTypeRepository: StateMachineTypeRepository,
 ) {
     val log = KotlinLogging.logger {}
 
@@ -24,8 +23,7 @@ class GraphService(
 
     @Transactional
     fun createDot(type: String, markState: String = ""): String {
-//        val stateMachineType = stateMachineTypeRepository.findByName(type)
-        val stateMachineType = StateMachineType(1, "", emptyList())
+        val stateMachineType = stateMachineTypeRepository.findByName(type)
         val transitions = stateMachineType.transitions
         val states = transitions.flatMap { listOf(it.fromState, it.toState) }.toSet()
         return """

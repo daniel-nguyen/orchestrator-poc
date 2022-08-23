@@ -25,7 +25,7 @@ class ActiveMqConfig {
     }
 
     @Bean
-    fun connectionFactory(broker: BrokerService): ActiveMQConnectionFactory {
+    fun mqConnectionFactory(broker: BrokerService): ActiveMQConnectionFactory {
         val connectionFactory = ActiveMQConnectionFactory()
         connectionFactory.brokerURL = broker.defaultSocketURIString
         //connectionFactory.password = BROKER_USERNAME

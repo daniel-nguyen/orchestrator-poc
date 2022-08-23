@@ -1,13 +1,12 @@
-package com.slupicki.orchestrator
+package com.slupicki.spring
 
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.context.SpringBootTest
 
-//@SpringBootTest
-class OrchestratorPocApplicationTests {
+@SpringBootTest
+class SpringStateMachinePocApplicationIT {
 
     @Test
     fun contextLoads() {
     }
-
 }

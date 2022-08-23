@@ -12,7 +12,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 import org.springframework.jms.core.JmsTemplate
 
-@SpringBootApplication
+//@SpringBootApplication
 class OrchestratorPocApplication: CommandLineRunner {
     val log = KotlinLogging.logger {}
 
@@ -51,6 +51,6 @@ class OrchestratorPocApplication: CommandLineRunner {
 
 }
 
-fun main(args: Array<String>) {
-    runApplication<OrchestratorPocApplication>(*args)
-}
+//fun main(args: Array<String>) {
+//    runApplication<OrchestratorPocApplication>(*args)
+//}
