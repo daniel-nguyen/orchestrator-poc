@@ -21,9 +21,9 @@ class SpringStateMachinePocApplicationIT(
         val stateMachine = stateMachineFactory.stateMachine
 
         stateMachine.startReactively().block()
-        System.err.println(stateMachine.state.id)
-        stateMachine.sendEvent(Mono.just(MessageBuilder.createMessage(OnboardingEvent.SUCCESS, MessageHeaders(emptyMap())))).collectList().block()
-        System.err.println(stateMachine.state.id)
+        System.err.println("current state: ${stateMachine.state.id}")
+        stateMachine.sendEvent(Mono.just(MessageBuilder.createMessage(OnboardingEvent.SUCCESS, MessageHeaders(mapOf(Pair("onboardingClientId", "1")))))).collectList().block()
+        System.err.println("current state: ${stateMachine.state.id}")
 
     }
 }
