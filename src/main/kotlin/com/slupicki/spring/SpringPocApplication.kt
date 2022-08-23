@@ -1,11 +1,7 @@
 package com.slupicki.spring
 
-import com.slupicki.orchestrator.dao.StateMachineRepository
-import com.slupicki.orchestrator.dao.StateMachineTypeRepository
-import com.slupicki.orchestrator.service.StateMachineEngine
-import com.slupicki.spring.model.SpringOnboardingEvent
-import com.slupicki.spring.model.SpringOnboardingState
-import com.slupicki.spring.service.SpringGraphService
+import com.slupicki.spring.model.OnboardingEvent
+import com.slupicki.spring.model.OnboardingState
 import mu.KotlinLogging
 import org.flywaydb.core.Flyway
 import org.springframework.beans.factory.annotation.Autowired
@@ -16,10 +12,7 @@ import org.springframework.context.annotation.Bean
 import org.springframework.core.env.Environment
 import org.springframework.core.env.get
 import org.springframework.jms.core.JmsTemplate
-import org.springframework.messaging.support.MessageBuilder
 import org.springframework.statemachine.config.StateMachineFactory
-import org.springframework.statemachine.persist.StateMachineRuntimePersister
-import reactor.core.publisher.Mono
 
 @SpringBootApplication
 class SpringPocApplication(
@@ -30,7 +23,7 @@ class SpringPocApplication(
 //    @Autowired private val stateMachineTypeRepository: StateMachineTypeRepository,
 //    @Autowired private val stateMachineRepository: StateMachineRepository,
     @Autowired private val jmsTemplate: JmsTemplate,
-    @Autowired private val stateMachineFactory: StateMachineFactory<SpringOnboardingState, SpringOnboardingEvent>
+    @Autowired private val stateMachineFactory: StateMachineFactory<OnboardingState, OnboardingEvent>
 ): CommandLineRunner {
     companion object {
         val log = KotlinLogging.logger {}

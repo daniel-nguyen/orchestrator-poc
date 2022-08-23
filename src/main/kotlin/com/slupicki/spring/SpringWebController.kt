@@ -1,6 +1,8 @@
 package com.slupicki.spring
 
 import com.slupicki.orchestrator.model.Event
+import com.slupicki.orchestrator.model.StateMachine
+import com.slupicki.orchestrator.model.StateMachineType
 import com.slupicki.orchestrator.service.GraphService
 import com.slupicki.orchestrator.service.StateMachineEngine
 import com.slupicki.orchestrator.service.event.Bus
@@ -26,12 +28,12 @@ class SpringWebController(
 
     @RequestMapping("/")
     fun home(model: Model): String {
-//        val stateMachineTypes = stateMachineEngine.getMachineTypes()
-//        val stateMachines = stateMachineEngine.getMachines()
-//        val machineIdToAvailableEvents = stateMachines.associate { it.id!! to it.transitionsFromCurrentState().keys }
-//        model.addAttribute("stateMachines", stateMachines)
-//        model.addAttribute("machineIdToAvailableEvents", machineIdToAvailableEvents)
-//        model.addAttribute("stateMachineTypes", stateMachineTypes)
+        val stateMachineTypes = listOf(StateMachineType(1L, "ONBOARDING", listOf()))
+        val stateMachines = listOf<StateMachine>()
+        val machineIdToAvailableEvents = stateMachines.associate { it.id!! to it.transitionsFromCurrentState().keys }
+        model.addAttribute("stateMachines", stateMachines)
+        model.addAttribute("machineIdToAvailableEvents", machineIdToAvailableEvents)
+        model.addAttribute("stateMachineTypes", stateMachineTypes)
         return "spring_state"
     }
 

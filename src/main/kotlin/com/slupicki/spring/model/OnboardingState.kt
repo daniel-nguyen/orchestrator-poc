@@ -1,6 +1,6 @@
 package com.slupicki.spring.model
 
-enum class SpringOnboardingState {
+enum class OnboardingState {
     ONBOARDING_INIT,
     FINSTAR,
     FINSTAR_MANUAL,
