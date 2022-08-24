@@ -17,14 +17,15 @@ class SpringPocApplication(
     @Autowired private val environment: Environment,
     @Autowired private val onboardingService: OnboardingService,
     @Autowired private val jmsTemplate: JmsTemplate,
+//    @Autowired private val flyway: Flyway,
 ): CommandLineRunner {
     companion object {
         private val log = KotlinLogging.logger {}
     }
 
     override fun run(vararg args: String?) {
-        //flyway.clean()
-        //flyway.migrate()
+//        flyway.clean()
+//        flyway.migrate()
 
         //stateMachineEngine.createMachine("ONBOARDING", "client1", mapOf("a" to "value_a"))
 
@@ -40,18 +41,16 @@ class SpringPocApplication(
     }
 
     @Bean(initMethod = "migrate")
-    fun flyway(): Flyway {
-        return Flyway(
-            Flyway.configure()
-                .baselineOnMigrate(true)
-//                .locations(environment["spring.flyway.locations"])
-                .dataSource(
-                    environment["spring.datasource.url"],
-                    environment["spring.datasource.username"],
-                    environment["spring.datasource.password"]
-                )
-        )
-    }
+    fun flyway(): Flyway = Flyway(
+        Flyway.configure()
+            .baselineOnMigrate(true)
+//                .locations("classpath:db")
+            .dataSource(
+                environment["spring.datasource.url"],
+                environment["spring.datasource.username"],
+                environment["spring.datasource.password"]
+            )
+    )
 
 }
 

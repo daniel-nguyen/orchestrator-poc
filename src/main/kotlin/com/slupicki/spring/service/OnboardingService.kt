@@ -18,7 +18,6 @@ import org.springframework.statemachine.transition.Transition
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
-import reactor.kotlin.core.publisher.switchIfEmpty
 import reactor.kotlin.core.publisher.toMono
 import java.util.Optional
 
@@ -32,8 +31,8 @@ class OnboardingService(
     )
 
     companion object {
-        private val log = KotlinLogging.logger {}
-        private val ONBOARDING_ID_HEADER = "onboardingId"
+        private val logger = KotlinLogging.logger {}
+        private const val ONBOARDING_ID_HEADER = "onboardingId"
 
         fun createMessage(event: OnboardingEvent, clientId: Long): Message<OnboardingEvent> =
             MessageBuilder.createMessage(event, MessageHeaders(mapOf(Pair(ONBOARDING_ID_HEADER, clientId))))
@@ -51,9 +50,10 @@ class OnboardingService(
                     retrieveOnboardingId(message)
                         .toMono()
                         .flatMap { onboardingRepository.findById(it) }
-                        .switchIfEmpty { Onboarding(state = OnboardingState.ONBOARDING_INIT.name).toMono() }
+                        .map { it.copy(state = state.id.name) }
                         .flatMap { onboardingRepository.save(it) }
-                        .subscribe()
+                        .doOnNext { System.err.println("Saved $it") }
+                        .subscribe { System.err.println("subscribed: $it ") } //TODO
                 }
 
             }

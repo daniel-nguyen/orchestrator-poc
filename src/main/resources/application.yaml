@@ -3,6 +3,13 @@ spring:
     url: "jdbc:postgresql://localhost:12432/postgres"
     username: "orchestratordb"
     password: "orchestratordb"
+  r2dbc:
+    url: "r2dbc:postgresql://localhost:12432/postgres"
+    username: "orchestratordb"
+    password: "orchestratordb"
+    pool:
+      initial-size: 10
+      max-size: 50
   jpa:
     hibernate:
       ddl-auto: update

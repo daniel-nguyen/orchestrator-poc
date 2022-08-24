@@ -7,13 +7,15 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 
 @SpringBootTest
-class SpringStateMachinePocApplicationIT(
+class SpringPocApplicationIT(
     @Autowired private val onboardingService: OnboardingService
 ) {
 
     @Test
     fun doSomeAction() {
-        onboardingService.handleEvent(OnboardingEvent.SUCCESS, 1L)
+//        val onboarding = onboardingService.createOnboarding().block()!!
+        onboardingService.handleEvent(OnboardingEvent.SUCCESS, 1L).collectList().block()
 
+        Thread.sleep(2000L)
     }
 }
