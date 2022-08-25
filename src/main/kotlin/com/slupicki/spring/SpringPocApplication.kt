@@ -10,9 +10,11 @@ import org.springframework.boot.runApplication
 import org.springframework.context.annotation.Bean
 import org.springframework.core.env.Environment
 import org.springframework.core.env.get
+import org.springframework.data.jdbc.repository.config.EnableJdbcRepositories
 import org.springframework.jms.core.JmsTemplate
 
 @SpringBootApplication
+@EnableJdbcRepositories
 class SpringPocApplication(
     @Autowired private val environment: Environment,
     @Autowired private val onboardingService: OnboardingService,

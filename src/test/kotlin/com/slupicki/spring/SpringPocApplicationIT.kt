@@ -13,7 +13,7 @@ class SpringPocApplicationIT(
 
     @Test
     fun doSomeAction() {
-//        val onboarding = onboardingService.createOnboarding().block()!!
+//        val onboarding = onboardingService.createOnboarding()
         onboardingService.handleEvent(OnboardingEvent.SUCCESS, 1L).collectList().block()
 
         Thread.sleep(2000L)

@@ -53,11 +53,6 @@ class SpringOnboardingStateMachineConfiguration : StateMachineConfigurerAdapter<
     }
 
     override fun configure(transitions: StateMachineTransitionConfigurer<OnboardingState, OnboardingEvent>) {
-        val enterFinstarAction = Action<OnboardingState, OnboardingEvent> {
-            context -> context
-            TODO("Not yet implemented")
-        }
-
         //TODO use some guard() to entry or exit states or action()
 
         OnboardingTransition.values().forEach {
