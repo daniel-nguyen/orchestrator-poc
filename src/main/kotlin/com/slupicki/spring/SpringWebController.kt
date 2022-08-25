@@ -20,7 +20,7 @@ class SpringWebController(
 
     @RequestMapping("/")
     fun home(model: Model): String {
-        val stateMachines: List<Onboarding> = onboardingRepository.findAll().collectList().block()!!
+        val stateMachines: List<Onboarding> = onboardingRepository.findAll().collectList().map { it.reversed() }.block()!!
         val machineIdToAvailableEvents: Map<String, List<OnboardingEvent>> = stateMachines.associate { onboarding -> onboarding.id.toString() to
                 OnboardingTransition.values()
                     .filter { it.sourceState.name == onboarding.state }

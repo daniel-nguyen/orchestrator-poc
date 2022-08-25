@@ -33,8 +33,8 @@ class SpringOnboardingStateMachineConfiguration : StateMachineConfigurerAdapter<
         }
         val exitDoNothingAction = Action<OnboardingState, OnboardingEvent> { }
 
-        val finstarEntryAction = Action<OnboardingState, OnboardingEvent> { stateContext ->
-            System.err.println("finstarEntryAction - source: ${stateContext.source.id}, target: ${stateContext.target.id}, stage: ${stateContext.stage}, event: ${stateContext.event}, ${stateContext.transition.name} ${stateContext.messageHeaders} ")
+        val smartTradeEntryAction = Action<OnboardingState, OnboardingEvent> { stateContext ->
+            System.err.println("smartTradeEntryAction - source: ${stateContext.source.id}, target: ${stateContext.target.id}, stage: ${stateContext.stage}, event: ${stateContext.event}, ${stateContext.transition.name} ${stateContext.messageHeaders} ")
             stateContext.stateMachine.sendEvent(Mono.just(MessageBuilder.createMessage(SUCCESS, stateContext.messageHeaders))).collectList().subscribe()
         }
 
@@ -55,11 +55,11 @@ class SpringOnboardingStateMachineConfiguration : StateMachineConfigurerAdapter<
             .initial(ONBOARDING_INIT)
             .end(ONBOARDING_ENDS)
             .state(ONBOARDING_INIT, entryAction, exitDoNothingAction)
-            .state(FINSTAR, finstarEntryAction, exitDoNothingAction)
+            .state(FINSTAR, entryAction, exitDoNothingAction)
             .state(FINSTAR_MANUAL, entryAction, exitDoNothingAction)
-            .state(SMARTTRADE, failRandomlyEntryAction, exitDoNothingAction)
+            .state(SMARTTRADE, smartTradeEntryAction, exitDoNothingAction)
             .state(SMARTTRADE_MANUAL, entryAction, exitDoNothingAction)
-            .state(ATLAS, entryAction, exitDoNothingAction)
+            .state(ATLAS, failRandomlyEntryAction, exitDoNothingAction)
             .state(ATLAS_MANUAL, entryAction, exitDoNothingAction)
             .state(ONBOARDING_ENDS, entryAction, exitDoNothingAction)
     }
@@ -72,7 +72,7 @@ class SpringOnboardingStateMachineConfiguration : StateMachineConfigurerAdapter<
                 .event(it.event)
                 .actionFunction { stateContext -> Mono
                     .just(Unit)
-                    .doOnNext { System.err.println("action - stage: ${stateContext.stage}, event: ${stateContext.event}, ${stateContext.transition.name} ") }
+                    .doOnNext { System.err.println("action - stage: ${stateContext.stage}, event: ${stateContext.event}, ${stateContext.transition.name}, ${stateContext.transition.source.id}->${stateContext.transition.target.id} ") }
                     .flatMap { Mono.empty() }
                 }
                 .and()

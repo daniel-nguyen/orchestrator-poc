@@ -20,7 +20,7 @@
 </div>
 <div class="mytabs">
     <#list stateMachines as machine>
-    <input type="radio" id="tab${machine.id}" name="mytabs" <#if machine?is_last>checked="checked"</#if></div>
+    <input type="radio" id="tab${machine.id}" name="mytabs" <#if machine?is_first>checked="checked"</#if></div>
 <label for="tab${machine.id}">${machine.id}</label>
 <div class="tab">
     <h2>${machine.id}</h2>
