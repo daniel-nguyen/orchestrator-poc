@@ -12,6 +12,7 @@ import com.slupicki.spring.model.Onboarding
 import com.slupicki.spring.model.OnboardingEvent
 import com.slupicki.spring.model.OnboardingTransition
 import com.slupicki.spring.repository.OnboardingRepository
+import com.slupicki.spring.service.OnboardingService
 import mu.KotlinLogging
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
@@ -24,11 +25,8 @@ import org.springframework.web.bind.annotation.RequestParam
 
 @Controller
 class SpringWebController(
-    private val onboardingRepository: OnboardingRepository
-//    val graphService: GraphService,
-//    val stateMachineEngine: StateMachineEngine,
-//    val eventBus: EventBus,
-) {
+    private val onboardingRepository: OnboardingRepository,
+    private val onboardingService: OnboardingService) {
     val log = KotlinLogging.logger {}
 
     @RequestMapping("/")
@@ -41,51 +39,27 @@ class SpringWebController(
                     .map { it.event }
                     .distinct()
                     .sorted()}
-//        val machineIdToAvailableEvents: Map<String, Set<Event>> = stateMachines.associate { it.id!! to it.transitionsFromCurrentState().keys }
         model.addAttribute("stateMachines", stateMachines)
         model.addAttribute("machineIdToAvailableEvents", machineIdToAvailableEvents)
         model.addAttribute("stateMachineTypes", stateMachineTypes)
         return "spring_state"
     }
 
-//    @RequestMapping("/svg/{type}")
-//    fun graph(
-//        @PathVariable type: String,
-//        @RequestParam(defaultValue = "") markState: String,
-//    ): ResponseEntity<String> {
-//        val dot = graphService.createDot(type, markState)
-//        val svg = graphService.dotToSvg(dot)
-//        return ResponseEntity
-//            .ok()
-//            .contentType(MediaType("image", "svg+xml"))
-//            .body(svg)
-//    }
-//
-//    @GetMapping("/create_machine")
-//    fun createMachine(
-//        @RequestParam(name = "machine_name") machineName: String,
-//        @RequestParam(name = "machine_type") machineType: String,
-//        model: Model,
-//    ): String {
-//        stateMachineEngine.createMachine(machineType, machineName, mapOf("log_counter" to "1"))
-//        return "redirect:/"
-//    }
+    @GetMapping("/create_machine")
+    fun createMachine(): String {
+        onboardingService.createOnboarding().block()
+        // To give backend time to stabilize after event
+        Thread.sleep(1000)
+        return "redirect:/"
+    }
 
-//    @GetMapping("/send_event")
-//    fun sendEvent(
-//        @RequestParam event: String,
-//        @RequestParam(name = "machine_id") machineId: String,
-//        model: Model,
-//    ): String {
-//        val eventForStateMachineEngine = EventInContext(
-//            stateMachineId = machineId,
-//            event = Event.valueOf(event),
-//        )
-//        eventBus.send(Bus.TO_STATE_MACHINE, eventForStateMachineEngine)
-//        // To give backend time to stabilize after event
-//        Thread.sleep(500)
-//        return "redirect:/"
-//    }
+    @GetMapping("/send_event")
+    fun sendEvent(@RequestParam event: OnboardingEvent, @RequestParam(name = "machine_id") machineId: Long): String {
+        onboardingService.handleEvent(event, machineId).collectList().block()!!
+        // To give backend time to stabilize after event
+        Thread.sleep(1000)
+        return "redirect:/"
+    }
 
 
 }
