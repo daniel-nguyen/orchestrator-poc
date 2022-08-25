@@ -8,6 +8,9 @@ import com.slupicki.orchestrator.service.StateMachineEngine
 import com.slupicki.orchestrator.service.event.Bus
 import com.slupicki.orchestrator.service.event.EventBus
 import com.slupicki.orchestrator.service.event.EventInContext
+import com.slupicki.spring.model.Onboarding
+import com.slupicki.spring.model.OnboardingEvent
+import com.slupicki.spring.model.OnboardingTransition
 import com.slupicki.spring.repository.OnboardingRepository
 import mu.KotlinLogging
 import org.springframework.http.MediaType
@@ -30,9 +33,15 @@ class SpringWebController(
 
     @RequestMapping("/")
     fun home(model: Model): String {
-        val stateMachineTypes = listOf(StateMachineType(1L, "ONBOARDING", listOf()))
-        val stateMachines = listOf<StateMachine>()
-        val machineIdToAvailableEvents = stateMachines.associate { it.id!! to it.transitionsFromCurrentState().keys }
+        val stateMachineTypes: List<StateMachineType> = listOf(StateMachineType(1L, "ONBOARDING", listOf()))
+        val stateMachines: List<Onboarding> = onboardingRepository.findAll().collectList().block()!!
+        val machineIdToAvailableEvents: Map<String, List<OnboardingEvent>> = stateMachines.associate { onboarding -> onboarding.id.toString() to
+                OnboardingTransition.values()
+                    .filter { it.sourceState.name == onboarding.state }
+                    .map { it.event }
+                    .distinct()
+                    .sorted()}
+//        val machineIdToAvailableEvents: Map<String, Set<Event>> = stateMachines.associate { it.id!! to it.transitionsFromCurrentState().keys }
         model.addAttribute("stateMachines", stateMachines)
         model.addAttribute("machineIdToAvailableEvents", machineIdToAvailableEvents)
         model.addAttribute("stateMachineTypes", stateMachineTypes)

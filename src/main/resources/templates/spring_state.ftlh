@@ -43,9 +43,9 @@
     <div class="container">
         <div class="column-left">
             <p>
-                Current state: <b>${machine.currentState.name}</b>
+                Current state: <b>${machine.state}</b>
             </p>
-            <#list machineIdToAvailableEvents[machine.id]>
+            <#list machineIdToAvailableEvents[machine.id?c]>
                 <form action="/send_event">
                     <input type="hidden" name="machine_id" value="${machine.id}">
                     <#items as event>
@@ -64,6 +64,7 @@
             <br>
             Context:
             <br>
+<#--
             <#list machine.context.attributes?keys?sort>
                 <table>
                     <thead>
@@ -86,9 +87,10 @@
                     Context is empty
                 </p>
             </#list>
+-->
         </div>
         <div class="column-right">
-            <img src="/svg/${machine.stateMachineType.name}?markState=${machine.currentState.name}"/>
+            <img src="/svg/${machine.id}?markState=${machine.state}"/>
         </div>
     </div>
 </div>

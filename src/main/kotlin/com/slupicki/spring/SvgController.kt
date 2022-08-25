@@ -23,5 +23,5 @@ class SvgController(
             .onErrorResume { Mono.just(Optional.empty()) }
             .switchIfEmpty { Mono.just(Optional.empty()) }
             .map { springGraphService.createRenderable(it.orElse(null)) }
-            .doOnNext { System.err.println(it) }
+//            .doOnNext { System.err.println(it) }
             .flatMap { springGraphService.render(it).toMono() }}
