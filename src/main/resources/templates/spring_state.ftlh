@@ -11,22 +11,6 @@
     <form action="/create_machine">
         <table style="background-color: whitesmoke">
             <tr>
-                <th style="background-color: whitesmoke">Machine type:</th>
-                <td>
-                    <select name="machine_type">
-                        <#list stateMachineTypes as machineType>
-                            <option value="${machineType.id}">${machineType.name}</option>
-                        </#list>
-                    </select>
-                </td>
-            </tr>
-            <tr>
-                <th style="background-color: whitesmoke">Machine name:</th>
-                <td>
-                    <input type="text" name="machine_name"/>
-                </td>
-            </tr>
-            <tr>
                 <th colspan="2" style="background-color: whitesmoke">
                     <input type="submit" value="Create new machine">
                 </th>
@@ -64,30 +48,6 @@
             <br>
             Context:
             <br>
-<#--
-            <#list machine.context.attributes?keys?sort>
-                <table>
-                    <thead>
-                    <tr>
-                        <th>Key</th>
-                        <th>Value</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <#items as key>
-                        <tr>
-                            <td>${key}</td>
-                            <td>${machine.context.attributes[key]}</td>
-                        </tr>
-                    </#items>
-                    </tbody>
-                </table>
-            <#else>
-                <p>
-                    Context is empty
-                </p>
-            </#list>
--->
         </div>
         <div class="column-right">
             <img src="/svg/${machine.id}?markState=${machine.state}"/>

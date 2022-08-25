@@ -22,10 +22,6 @@ class FactoryPersistStateMachineHandler<S, E>(
     }
 
     private val interceptor = object : StateMachineInterceptorAdapter<S, E>() {
-        override fun preStateChange(state: State<S, E>, message: Message<E>, transition: Transition<S, E>, stateMachine: StateMachine<S, E>, rootStateMachine: StateMachine<S, E>?) {
-            persistListener.onPersist(state, message, transition, stateMachine)
-        }
-
         override fun postStateChange(state: State<S, E>, message: Message<E>, transition: Transition<S, E>, stateMachine: StateMachine<S, E>, rootStateMachine: StateMachine<S, E>?) {
             persistListener.onPersist(state, message, transition, stateMachine)
         }

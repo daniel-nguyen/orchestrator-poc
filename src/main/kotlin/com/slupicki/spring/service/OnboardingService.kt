@@ -34,7 +34,7 @@ class OnboardingService(
         private val logger = KotlinLogging.logger {}
         private const val ONBOARDING_ID_HEADER = "onboardingId"
 
-        fun createMessage(event: OnboardingEvent, clientId: Long): Message<OnboardingEvent> =
+        private fun createMessage(event: OnboardingEvent, clientId: Long): Message<OnboardingEvent> =
             MessageBuilder.createMessage(event, MessageHeaders(mapOf(Pair(ONBOARDING_ID_HEADER, clientId))))
 
         private fun retrieveOnboardingId(message: Message<OnboardingEvent>): Long? =
@@ -53,11 +53,9 @@ class OnboardingService(
                         .map { it.copy(state = state.id.name) }
                         .flatMap { onboardingRepository.save(it) }
                         .doOnNext { System.err.println("Saved $it") }
-                        .subscribe { System.err.println("subscribed: $it ") } //TODO
+                        .subscribe { System.err.println("subscribed: $it ") }
                 }
-
             }
-
     }
 
     fun createOnboarding(): Mono<Onboarding> =
