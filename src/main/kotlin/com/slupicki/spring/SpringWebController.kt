@@ -8,6 +8,7 @@ import com.slupicki.orchestrator.service.StateMachineEngine
 import com.slupicki.orchestrator.service.event.Bus
 import com.slupicki.orchestrator.service.event.EventBus
 import com.slupicki.orchestrator.service.event.EventInContext
+import com.slupicki.spring.repository.OnboardingRepository
 import mu.KotlinLogging
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestParam
 
 @Controller
 class SpringWebController(
+    private val onboardingRepository: OnboardingRepository
 //    val graphService: GraphService,
 //    val stateMachineEngine: StateMachineEngine,
 //    val eventBus: EventBus,

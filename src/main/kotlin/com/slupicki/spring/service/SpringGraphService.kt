@@ -13,12 +13,12 @@ import java.io.OutputStream
 class SpringGraphService {
     fun createRenderable(selected: OnboardingState?): String {
         val nodes = OnboardingState.values()
-            .map { "${it.name} [label=\"${it.label}\" shape=\"ellipse\"${if (it==selected) " style=\"filled\"" else ""}" }
-            .joinToString { "\n" }
+            .map { "${it.name} [label=\"${it.label}\" shape=\"ellipse\"${if (it==selected) " style=\"filled\"" else ""}]" }
+            .joinToString("\n")
 
         val transitions = OnboardingTransition.values()
             .map { "${it.sourceState.name} -> ${it.targetState.name} [label=\"${it.event.name}\" color=${when(it.event) { SUCCESS -> "green"; RETRY -> "blue"; else -> "red"} }]" }
-            .joinToString { "\n" }
+            .joinToString("\n")
 
         return "digraph G {\n{\n$nodes}\n$transitions}\n"
     }
