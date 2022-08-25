@@ -1,6 +1,5 @@
 package com.slupicki.orchestrator.service
 
-import com.slupicki.orchestrator.dao.StateMachineTypeRepository
 import com.slupicki.orchestrator.model.Event
 import com.slupicki.orchestrator.model.State
 import com.slupicki.orchestrator.model.StateMachineType
@@ -38,7 +37,7 @@ ${transitions.joinToString("\n") { transitionToDotEdge(it) }}
         """.trimIndent()
     }
 
-    fun dotToSvg(dot: String): String {
+    fun  dotToSvg(dot: String): String {
         if (svgCache.containsKey(dot)) {
             return svgCache[dot]!!
         }
